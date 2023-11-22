@@ -274,16 +274,14 @@ def get_amdgcn_bitcode_paths(gfx_arch: str):
 
 
 def get_amdgpu_arch_fulldetails():
-    # print("get_amdgpu_arch_fulldetails")
     """
-    get the amdgpu fulll ISA details for compiling:
+    get the amdgpu full ISA details for compiling:
     i.e., arch_triple: amdgcn-amd-amdhsa; arch_name: gfx906; arch_features: sramecc+:xnack-
     """
     try:
         # TODO: package rocm.cc with Triton
-        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm")
-        rocminfo = subprocess.check_output(rocm_path_dir + '/bin/rocminfo').decode()
-        gfx_arch_details = re.search('amd.*', rocminfo).group(0).strip().split('--')
+        arch_info = _triton.get_arch_info()
+        gfx_arch_details = re.search('amd.*', arch_info).group(0).strip().split('--')
         arch_triple = gfx_arch_details[0]
         arch_name_features = gfx_arch_details[1].split(':')
         arch_name = arch_name_features[0]
@@ -293,9 +291,9 @@ def get_amdgpu_arch_fulldetails():
         gfx_arch = os.environ.get('MI_GPU_ARCH', arch_name)
         if gfx_arch is None:
             raise RuntimeError('gfx_arch is None (not specified)')
-
         return {"gfx_triple": arch_triple, "gfx_arch": gfx_arch, "gfx_features": arch_features}
-    except BaseException:
+    except BaseException as e:
+        print("Error: Attempting to get amgpu ISA Details {}".format(e))
         return None
 
 
