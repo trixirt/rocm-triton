@@ -18,6 +18,7 @@ fi
 # Extract major and minor version numbers
 MAJOR_VERSION=$(echo "${ROCM_VERSION}" | cut -d '.' -f 1)
 MINOR_VERSION=$(echo "${ROCM_VERSION}" | cut -d '.' -f 2)
+ROCM_INT=$(($MAJOR_VERSION * 10000 + $MINOR_VERSION * 100)) # Add patch later
 
 # Check TRITON_ROCM_DIR is set
 if [[ -z "${TRITON_ROCM_DIR}" ]]; then
@@ -42,6 +43,7 @@ do
     cp $lib $TRITON_ROCM_DIR/lib/
 done
 
+
 # Required ROCm libraries
 if [[ "${MAJOR_VERSION}" == "6" ]]; then
     libamdhip="libamdhip64.so.6"
@@ -57,6 +59,10 @@ ROCM_SO=(
     "libdrm.so.2"
     "libdrm_amdgpu.so.1"
 )
+
+if [[ $ROCM_INT -ge 60100 ]]; then
+    ROCM_SO+=("librocprofiler-register.so.0")
+fi	
 
 # Find the SO libs dynamically
 for lib in "${ROCM_SO[@]}"
