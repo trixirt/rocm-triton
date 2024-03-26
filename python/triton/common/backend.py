@@ -109,6 +109,7 @@ def path_to_ptxas():
         os.path.join(base_dir, "third_party", "cuda", "bin", "ptxas")
     ]
 
+    return "/bin/false", "12.4"
     for ptxas in paths:
         ptxas_bin = ptxas.split(" ")[0]
         if os.path.exists(ptxas_bin) and os.path.isfile(ptxas_bin):

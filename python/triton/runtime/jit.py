@@ -125,8 +125,8 @@ def version_key():
         with open(lib.module_finder.find_spec(lib.name).origin, "rb") as f:
             contents += [hashlib.sha1(f.read()).hexdigest()]
     # ptxas version
-    ptxas = path_to_ptxas()[0]
-    ptxas_version = hashlib.sha1(subprocess.check_output([ptxas, "--version"])).hexdigest()
+    ptxas, ptxas_version = path_to_ptxas()
+    # ptxas_version = hashlib.sha1(subprocess.check_output([ptxas, "--version"])).hexdigest()
     return '-'.join(TRITON_VERSION) + '-' + ptxas_version + '-' + '-'.join(contents)
 
 
