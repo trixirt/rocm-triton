@@ -30,7 +30,7 @@
 
 %global toolchain gcc
 
-Name:           python-%{pypi_name}
+Name:           python-%{pypi_name}-rocm
 Version:        %{pypi_version}
 Release:        1%{?dist}
 Summary:        A language and compiler for custom Deep Learning operations
@@ -46,6 +46,8 @@ Source1:        https://github.com/llvm/llvm-project/archive/%{commit1}.tar.gz
 Source2:        https://github.com/pybind/pybind11/archive/refs/tags/v2.11.1.tar.gz
 %endif
 
+Patch1:         0001-disable-tma-on-rocm.patch
+Patch2:         0001-remove-ptxas.patch
 # Can not download things
 # Patch1:         0001-Prepare-triton-setup-for-fedora.patch
 # TBD: Add PR
@@ -86,10 +88,10 @@ Deep-Learning primitives. The aim of Triton is to provide an open-source
 environment to write fast code at higher productivity than CUDA, but
 also with higher flexibility than other existing DSLs.
 
-%package -n     python3-%{pypi_name}
+%package -n     python3-%{pypi_name}-rocm
 Summary:        %{summary}
 
-%description -n python3-%{pypi_name}
+%description -n python3-%{pypi_name}-rocm
 Triton is a language and compiler for writing highly efficient custom
 Deep-Learning primitives. The aim of Triton is to provide an open-source
 environment to write fast code at higher productivity than CUDA, but
@@ -155,6 +157,10 @@ sed -i -e 's@-Werror @ @' CMakeLists.txt
 
 # change default rocm location
 sed -i -e 's@set(ROCM_DEFAULT_DIR "/opt/rocm")@set(ROCM_DEFAULT_DIR "/usr")@' CMakeLists.txt
+
+# just removed cuda.h, can not use it now
+sed -i -e '/cuda.h/d'  include/triton/Target/PTX/TmaMetadata.h
+
 
 %build
 
@@ -249,7 +255,7 @@ module purge
 #%cmake_build -t test
 %endif
 
-%files -n python3-%{pypi_name}
+%files -n python3-%{pypi_name}-rocm
 %{python3_sitearch}/%{pypi_name}
 %{python3_sitearch}/%{pypi_name}*.egg-info
 
