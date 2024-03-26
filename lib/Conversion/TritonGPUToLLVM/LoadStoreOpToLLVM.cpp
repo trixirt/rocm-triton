@@ -446,6 +446,8 @@ struct StoreOpConversion
     return success();
   }
 };
+#ifndef USE_ROCM
+
 // TODO: refactor to save common logic with insertsliceasyncv2
 struct StoreAsyncOpConversion
     : public ConvertTritonGPUOpToLLVMPattern<triton::nvidia_gpu::StoreAsyncOp> {
@@ -968,6 +970,7 @@ private:
 
   const TensorPtrMapT *tensorPtrMap;
 };
+#endif
 
 struct AtomicCASOpConversion
     : public ConvertTritonGPUOpToLLVMPattern<triton::AtomicCASOp>,
@@ -1661,6 +1664,7 @@ struct InsertSliceAsyncOpConversion
   }
 };
 
+#ifndef USE_ROCM
 struct InsertSliceAsyncV2OpConversion
     : public ConvertTritonGPUOpToLLVMPattern<
           triton::nvidia_gpu::InsertSliceAsyncV2Op> {
@@ -2036,6 +2040,7 @@ private:
 
   const TensorPtrMapT *tensorPtrMap;
 };
+#endif
 
 void populateLoadStoreOpToLLVMPatterns(
     TritonGPUToLLVMTypeConverter &typeConverter, RewritePatternSet &patterns,
@@ -2054,8 +2059,10 @@ void populateLoadStoreOpToLLVMPatterns(
                                         indexCacheInfo, benefit);
   patterns.add<InsertSliceAsyncOpConversion>(
       typeConverter, allocation, indexCacheInfo, axisInfoAnalysis, benefit);
+#ifndef USE_ROCM
   patterns.add<InsertSliceAsyncV2OpConversion>(
       typeConverter, allocation, tmaMetadata, tensorPtrMap, benefit);
   patterns.add<StoreAsyncOpConversion>(typeConverter, allocation, tmaMetadata,
                                        tensorPtrMap, benefit);
+#endif
 }
