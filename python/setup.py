@@ -278,7 +278,7 @@ download_and_copy_ptxas()
 
 setup(
     name="triton",
-    version="2.2.0",
+    version="2.3.0",
     author="Philippe Tillet",
     author_email="phil@openai.com",
     description="A language and compiler for custom Deep Learning operations",
