@@ -239,10 +239,6 @@ cd python
 module purge
 %endif
 
-# empty files
-rm %{buildroot}%{python3_sitearch}/triton/compiler/make_launcher.py
-
-
 # Unit tests download so are not suitable for mock
 %if %{with test}
 %check
